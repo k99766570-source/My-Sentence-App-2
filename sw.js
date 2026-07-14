@@ -1,5 +1,5 @@
 // 간단한 오프라인 캐싱: 앱 파일을 한 번 받아두면 인터넷 없이도 열립니다.
-const CACHE_NAME = 'my-sentence-cards-v5';
+const CACHE_NAME = 'my-sentence-cards-v6';
 const APP_SHELL = [
   './index.html',
   './app.js',

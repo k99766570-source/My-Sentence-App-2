@@ -31,8 +31,10 @@ async function loadAll() {
     const raw = localStorage.getItem('sentences');
     if (raw === null) throw new Error('no stored sentences');
     sentences = JSON.parse(raw);
+    if (!Array.isArray(sentences)) throw new Error('invalid sentences data');
   } catch (e) {
-    sentences = JSON.parse(JSON.stringify(SEED_SENTENCES));
+    const seed = (typeof SEED_SENTENCES !== 'undefined') ? SEED_SENTENCES : [];
+    sentences = JSON.parse(JSON.stringify(seed));
     await saveSentences();
   }
   try {
@@ -880,13 +882,31 @@ function closeConfirmModal() {
 /* ---------------- init ---------------- */
 
 async function init() {
-  await loadAll();
-  bindEvents();
-  buildQueue();
-  buildDictQueue();
-  renderStudyCard();
-  updateProgressHeader();
-  refreshVoices();
+  try {
+    await loadAll();
+  } catch (e) {
+    console.error('loadAll failed, using seed data:', e);
+    sentences = (typeof SEED_SENTENCES !== 'undefined')
+      ? JSON.parse(JSON.stringify(SEED_SENTENCES))
+      : [];
+    settings = { ...DEFAULT_SETTINGS };
+  }
+  try {
+    bindEvents();
+    buildQueue();
+    buildDictQueue();
+    renderStudyCard();
+    updateProgressHeader();
+    refreshVoices();
+  } catch (e) {
+    console.error('init render failed:', e);
+    const textEl = $('#sentenceText');
+    if (textEl) textEl.innerHTML = '앱 시작 중 오류가 발생했어요. 페이지를 새로고침해보세요.';
+  }
 }
 
-init();
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
