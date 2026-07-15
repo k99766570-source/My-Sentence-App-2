@@ -850,14 +850,14 @@ function bindEvents() {
       if (currentTab === 'list') renderList($('#searchInput').value);
       showToast('진행도를 초기화했어요.');
     } else if (pendingAction === 'resetAll') {
-      sentences = JSON.parse(JSON.stringify(SEED_SENTENCES));
+      sentences = [];
       await saveSentences();
       buildQueue();
       buildDictQueue();
       updateProgressHeader();
       if (currentTab === 'study') renderStudyCard();
       if (currentTab === 'list') renderList('');
-      showToast('전체 데이터를 초기화했어요.');
+      showToast('전체 문장을 삭제했어요.');
     }
     closeConfirmModal();
   });
